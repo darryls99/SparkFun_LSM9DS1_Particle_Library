@@ -101,6 +101,10 @@ void setup()
     while (1)
       ;
   }
+  
+  Serial.println("Calibrating magnetometer");
+  imu.calibrateMag(true,1024);
+  Serial.println("Calibration complete");
 }
 
 void loop()

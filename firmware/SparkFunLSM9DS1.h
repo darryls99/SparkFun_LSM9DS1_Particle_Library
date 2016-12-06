@@ -72,7 +72,7 @@ public:
 	uint16_t begin();
 	
 	void calibrate(bool autoCalc = true);
-	void calibrateMag(bool loadIn = true);
+	void calibrateMag(bool loadIn = true, int iterations = 1024);
 	void magOffset(uint8_t axis, int16_t offset);
 	
 	// accelAvailable() -- Polls the accelerometer status register to check

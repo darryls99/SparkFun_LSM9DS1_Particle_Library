@@ -354,7 +354,7 @@ void LSM9DS1::calibrate(bool autoCalc)
 	if (autoCalc) _autoCalc = true;
 }
 
-void LSM9DS1::calibrateMag(bool loadIn, int iterations)
+void LSM9DS1::calibrateMag(bool loadIn, uint16_t iterations)
 {
 	int i, j;
 	int16_t magMin[3] = {0, 0, 0};

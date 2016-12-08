@@ -104,7 +104,7 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
 	// 2 = 2.5 Hz    6 = 40 Hz
 	// 3 = 5 Hz      7 = 80 Hz
 	settings.mag.sampleRate = 7;
-	settings.mag.tempCompensationEnable = false;
+	settings.mag.tempCompensationEnable = true;
 	// magPerformance can be any value between 0-3
 	// 0 = Low power mode      2 = high performance
 	// 1 = medium performance  3 = ultra-high performance
@@ -354,13 +354,13 @@ void LSM9DS1::calibrate(bool autoCalc)
 	if (autoCalc) _autoCalc = true;
 }
 
-void LSM9DS1::calibrateMag(bool loadIn, uint16_t iterations)
+void LSM9DS1::calibrateMag(bool loadIn, uint16_t sampleCount)
 {
 	int i, j;
 	int16_t magMin[3] = {0, 0, 0};
 	int16_t magMax[3] = {0, 0, 0}; // The road warrior
 	
-	for (i=0; i<iterations; i++)
+	for (i=0; i<sampleCount; i++)
 	{
 		while (!magAvailable())
 			;

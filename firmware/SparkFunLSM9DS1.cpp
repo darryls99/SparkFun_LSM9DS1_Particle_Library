@@ -133,9 +133,6 @@ void LSM9DS1::init(interface_mode interface, uint8_t xgAddr, uint8_t mAddr)
 
 uint16_t LSM9DS1::begin()
 {
-	//! Todo: don't use _xgAddress or _mAddress, duplicating memory
-	_xgAddress = settings.device.agAddress;
-	_mAddress = settings.device.mAddress;
 	
 	constrainScales();
 	// Once we have the scale values, we can calculate the resolution
@@ -978,9 +975,9 @@ void LSM9DS1::xgWriteByte(uint8_t subAddress, uint8_t data)
 	// Whether we're using I2C or SPI, write a byte using the
 	// gyro-specific I2C address or SPI CS pin.
 	if (settings.device.commInterface == IMU_MODE_I2C)
-		I2CwriteByte(_xgAddress, subAddress, data);
+		I2CwriteByte(settings.device.agAddress, subAddress, data);
 	else if (settings.device.commInterface == IMU_MODE_SPI)
-		SPIwriteByte(_xgAddress, subAddress, data);
+		SPIwriteByte(settings.device.agAddress, subAddress, data);
 }
 
 void LSM9DS1::mWriteByte(uint8_t subAddress, uint8_t data)
@@ -988,9 +985,9 @@ void LSM9DS1::mWriteByte(uint8_t subAddress, uint8_t data)
 	// Whether we're using I2C or SPI, write a byte using the
 	// accelerometer-specific I2C address or SPI CS pin.
 	if (settings.device.commInterface == IMU_MODE_I2C)
-		return I2CwriteByte(_mAddress, subAddress, data);
+		return I2CwriteByte(settings.device.mAddress, subAddress, data);
 	else if (settings.device.commInterface == IMU_MODE_SPI)
-		return SPIwriteByte(_mAddress, subAddress, data);
+		return SPIwriteByte(settings.device.mAddress, subAddress, data);
 }
 
 uint8_t LSM9DS1::xgReadByte(uint8_t subAddress)
@@ -998,9 +995,9 @@ uint8_t LSM9DS1::xgReadByte(uint8_t subAddress)
 	// Whether we're using I2C or SPI, read a byte using the
 	// gyro-specific I2C address or SPI CS pin.
 	if (settings.device.commInterface == IMU_MODE_I2C)
-		return I2CreadByte(_xgAddress, subAddress);
+		return I2CreadByte(settings.device.agAddress, subAddress);
 	else if (settings.device.commInterface == IMU_MODE_SPI)
-		return SPIreadByte(_xgAddress, subAddress);
+		return SPIreadByte(settings.device.agAddress, subAddress);
 	
 	return 0;
 }
@@ -1010,9 +1007,9 @@ uint8_t LSM9DS1::xgReadBytes(uint8_t subAddress, uint8_t * dest, uint8_t count)
 	// Whether we're using I2C or SPI, read multiple bytes using the
 	// gyro-specific I2C address or SPI CS pin.
 	if (settings.device.commInterface == IMU_MODE_I2C)
-		return I2CreadBytes(_xgAddress, subAddress, dest, count);
+		return I2CreadBytes(settings.device.agAddress, subAddress, dest, count);
 	else if (settings.device.commInterface == IMU_MODE_SPI)
-		return SPIreadBytes(_xgAddress, subAddress, dest, count);
+		return SPIreadBytes(settings.device.agAddress, subAddress, dest, count);
 }
 
 uint8_t LSM9DS1::mReadByte(uint8_t subAddress)
@@ -1020,9 +1017,9 @@ uint8_t LSM9DS1::mReadByte(uint8_t subAddress)
 	// Whether we're using I2C or SPI, read a byte using the
 	// accelerometer-specific I2C address or SPI CS pin.
 	if (settings.device.commInterface == IMU_MODE_I2C)
-		return I2CreadByte(_mAddress, subAddress);
+		return I2CreadByte(settings.device.mAddress, subAddress);
 	else if (settings.device.commInterface == IMU_MODE_SPI)
-		return SPIreadByte(_mAddress, subAddress);
+		return SPIreadByte(settings.device.mAddress, subAddress);
 }
 
 uint8_t LSM9DS1::mReadBytes(uint8_t subAddress, uint8_t * dest, uint8_t count)
@@ -1030,17 +1027,17 @@ uint8_t LSM9DS1::mReadBytes(uint8_t subAddress, uint8_t * dest, uint8_t count)
 	// Whether we're using I2C or SPI, read multiple bytes using the
 	// accelerometer-specific I2C address or SPI CS pin.
 	if (settings.device.commInterface == IMU_MODE_I2C)
-		return I2CreadBytes(_mAddress, subAddress, dest, count);
+		return I2CreadBytes(settings.device.mAddress, subAddress, dest, count);
 	else if (settings.device.commInterface == IMU_MODE_SPI)
-		return SPIreadBytes(_mAddress, subAddress, dest, count);
+		return SPIreadBytes(settings.device.mAddress, subAddress, dest, count);
 }
 
 void LSM9DS1::initSPI()
 {
-	pinMode(_xgAddress, OUTPUT);
-	digitalWrite(_xgAddress, HIGH);
-	pinMode(_mAddress, OUTPUT);
-	digitalWrite(_mAddress, HIGH);
+	pinMode(settings.device.agAddress, OUTPUT);
+	digitalWrite(settings.device.agAddress, HIGH);
+	pinMode(settings.device.mAddress, OUTPUT);
+	digitalWrite(settings.device.mAddress, HIGH);
 	
 	SPI.begin();
 	// Maximum SPI frequency is 10MHz:
@@ -1080,7 +1077,7 @@ uint8_t LSM9DS1::SPIreadBytes(uint8_t csPin, uint8_t subAddress,
 	uint8_t rAddress = 0x80 | (subAddress & 0x3F);
 	// Mag SPI port is different. If we're reading multiple bytes, 
 	// set bit 1 to 1. The remaining six bytes are the address to be read
-	if ((csPin == _mAddress) && count > 1)
+	if ((csPin == settings.device.mAddress) && count > 1)
 		rAddress |= 0x40;
 	
 	digitalWrite(csPin, LOW); // Initiate communication

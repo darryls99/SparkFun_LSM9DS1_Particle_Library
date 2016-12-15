@@ -60,6 +60,10 @@ Include the library, declare an IMU object, and set it up with these snippets of
 		while (1)
 		  ;
 	  }
+	  
+	  Serial.println("Calibrating magnetometer - takes about 15 seconds");
+      imu.calibrateMag(true,1024);
+      Serial.println("Calibration complete");
 	}
 
 #### Reading Sensor Data

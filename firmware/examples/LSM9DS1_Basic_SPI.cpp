@@ -106,7 +106,7 @@ void setup()
       Particle.process();
   }
   
-  Serial.println("Calibrating magnetometer");
+  Serial.println("Calibrating magnetometer - takes about 15 seconds");
   imu.calibrateMag(true,1024);
   Serial.println("Calibration complete");
   
